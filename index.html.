@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Piket Santri - Kelompok Tahu Bulat</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Fredoka (bulat & ramah) & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome untuk ikon pendukung -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        display: ['"Fredoka"', 'sans-serif'],
+                    },
+                    colors: {
+                        forest: {
+                            950: '#1f2e22',
+                            900: '#2d4131', // Warna sidebar utama
+                            800: '#39523e',
+                            700: '#4a6b50',
+                            600: '#5d8464',
+                            100: '#e4ede5',
+                        },
+                        cream: {
+                            50: '#fcfaf4',  // Warna kartu utama
+                            100: '#f5f0e1', // Warna latar belakang konten
+                            200: '#e9e1cc', // Warna kartu sekunder / border
+                            300: '#d8ccb0',
+                        },
+                        wood: {
+                            500: '#a67c52', // Warna papan nama kayu
+                            600: '#8c653f',
+                            700: '#6e4e2e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Kustomisasi Scrollbar lembut ala kayu */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f5f0e1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c7b999;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a67c52;
+        }
+
+        /* Tekstur latar belakang pemandangan hutan lembut di bagian atas */
+        .woodland-banner {
+            background: linear-gradient(180deg, rgba(216, 232, 214, 0.85) 0%, rgba(245, 240, 225, 1) 100%);
+        }
+
+        /* Efek Papan Kayu di Sidebar */
+        .wood-sign {
+            background: linear-gradient(180deg, #b08558 0%, #946b42 100%);
+            border: 3px solid #6e4e2e;
+            box-shadow: 0 4px 0 #573d23, inset 0 2px 0 rgba(255,255,255,0.25);
+        }
+
+        /* Animasi kartu tugas */
+        .task-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .task-card:active {
+            transform: scale(0.98);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .toast-animate {
+            animation: slideUp 0.25s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-cream-100 text-forest-950 antialiased min-h-screen flex flex-col md:flex-row selection:bg-forest-700 selection:text-cream-50">
+
+    <!-- ===================================================================== -->
+    <!-- 1. SIDEBAR KIRI (GAYA ANIMAL CROSSING / WOODLAND SEPERTI GAMBAR)      -->
+    <!-- ===================================================================== -->
+    <aside class="w-full md:w-64 lg:w-72 bg-forest-900 text-cream-100 flex flex-col justify-between shrink-0 shadow-xl z-20">
+        <div class="p-4 sm:p-5 space-y-5">
+            
+            <!-- Papan Kayu Nama Aplikasi & Kelompok -->
+            <div class="wood-sign rounded-2xl p-3.5 text-center relative">
+                <!-- Paku dekoratif sudut papan -->
+                <span class="w-2 h-2 rounded-full bg-wood-700 absolute top-2 left-2.5 opacity-80"></span>
+                <span class="w-2 h-2 rounded-full bg-wood-700 absolute top-2 right-2.5 opacity-80"></span>
+                
+                <p class="text-[11px] font-bold uppercase tracking-widest text-amber-200/90">Smart Piket Santri</p>
+                <h1 class="font-display text-xl sm:text-2xl font-bold text-white tracking-wide drop-shadow-xs mt-0.5">
+                    Tahu Bulat
+                </h1>
+                <div class="inline-flex items-center gap-1 bg-wood-700/60 px-2.5 py-0.5 rounded-full text-[10px] font-semibold text-amber-100 mt-1">
+                    <i class="fa-solid fa-leaf text-emerald-300"></i>
+                    <span>Asrama & Kelas</span>
+                </div>
+            </div>
+
+            <!-- Navigasi Hari Piket (Senin - Sabtu) -->
+            <div>
+                <div class="flex items-center justify-between px-2 mb-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-forest-100/70">Jadwal Piket</span>
+                    <span class="text-[10px] font-semibold bg-forest-800 text-emerald-200 px-2 py-0.5 rounded-full">Sen – Sab</span>
+                </div>
+                
+                <!-- Grid di mobile, list vertikal di desktop seperti menu kiri pada gambar -->
+                <nav id="day-tabs" class="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-1 gap-1.5">
+                    <!-- Tab hari dirender dinamis oleh JS -->
+                </nav>
+            </div>
+        </div>
+
+        <!-- Kotak Tips Harian di Bagian Bawah Sidebar (Mirip kotak Tom Nook di gambar) -->
+        <div class="hidden md:block p-5 pt-0">
+            <div class="bg-forest-800/90 border-2 border-forest-700 rounded-2xl p-4 relative overflow-hidden">
+                <div class="flex items-center gap-2.5 mb-2">
+                    <div class="w-9 h-9 rounded-full bg-amber-200 border-2 border-wood-500 flex items-center justify-center text-lg shadow-xs shrink-0">
+                        🦝
+                    </div>
+                    <div>
+                        <h4 class="font-display text-sm font-bold text-amber-200 leading-tight">Tips Piket Hari Ini</h4>
+                        <span class="text-[10px] text-emerald-200/80">Pengurus Kebersihan</span>
+                    </div>
+                </div>
+                <p class="text-xs text-cream-100/90 leading-relaxed">
+                    "Kebersihan adalah sebagian dari iman. Yuk selesaikan semua tugas piket tepat waktu!"
+                </p>
+                <!-- Hiasan daun kecil di sudut -->
+                <i class="fa-solid fa-seedling text-emerald-400/20 text-4xl absolute -bottom-2 -right-2"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ===================================================================== -->
+    <!-- 2. AREA UTAMA KANAN (DASHBOARD KREM HANGAT & ILUSTRASI HUTAN)         -->
+    <!-- ===================================================================== -->
+    <main class="flex-1 flex flex-col min-w-0">
+        
+        <!-- Header Banner Atas dengan Pemandangan Ilustrasi SVG Hutan & Tenda -->
+        <header class="woodland-banner relative overflow-hidden border-b border-cream-200 px-5 sm:px-8 pt-6 pb-7">
+            <!-- Ilustrasi Dekoratif Pohon & Bukit di Latar Belakang -->
+            <svg class="absolute bottom-0 right-0 w-full h-28 pointer-events-none opacity-45" viewBox="0 0 800 120" preserveAspectRatio="none">
+                <path d="M0,120 L0,85 Q180,45 380,80 T800,60 L800,120 Z" fill="#b7cfb5"/>
+                <path d="M250,120 Q480,65 800,90 L800,120 Z" fill="#98b896"/>
+                <!-- Pohon Cemara Kecil -->
+                <polygon points="620,30 600,75 640,75" fill="#5d8464"/>
+                <polygon points="620,50 595,95 645,95" fill="#4a6b50"/>
+                <polygon points="670,20 645,70 695,70" fill="#4a6b50"/>
+                <polygon points="670,45 640,95 700,95" fill="#39523e"/>
+                <!-- Tenda Kemah Kecil -->
+                <polygon points="735,60 705,100 765,100" fill="#d4a373"/>
+                <polygon points="735,60 725,100 745,100" fill="#8c653f"/>
+            </svg>
+
+            <div class="relative z-10 max-w-5xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2 text-forest-800">
+                        <i class="fa-solid fa-leaf text-forest-600 text-lg"></i>
+                        <h2 class="font-display text-2xl sm:text-3xl font-bold tracking-tight text-forest-950">
+                            Selamat Bertugas, Santri!
+                        </h2>
+                    </div>
+                    <p class="text-xs sm:text-sm text-forest-800/80 font-medium mt-1">
+                        Jadwal kebersihan <strong class="text-forest-900">Kelompok Tahu Bulat</strong> &bull; Hari <span id="header-day-label" class="font-bold underline decoration-amber-400 decoration-2">Senin</span>
+                    </p>
+                </div>
+
+                <!-- Widget Info Tanggal & Cuaca di Pojok Kanan Atas (Seperti di Gambar) -->
+                <div class="bg-cream-50/90 backdrop-blur-xs border border-cream-300 rounded-2xl px-4 py-2.5 shadow-2xs flex items-center gap-3 self-start sm:self-auto">
+                    <div class="text-right">
+                        <div class="flex items-center justify-end gap-1.5 text-xs font-bold text-forest-900">
+                            <i class="fa-regular fa-calendar text-wood-600"></i>
+                            <span id="current-date-badge">Senin, 2026</span>
+                        </div>
+                        <div class="flex items-center justify-end gap-1.5 text-[11px] font-semibold text-forest-700 mt-0.5">
+                            <i class="fa-solid fa-sun text-amber-500"></i>
+                            <span>Semangat Piket!</span>
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-forest-700 border-2 border-amber-300 flex items-center justify-center text-white text-lg shadow-xs">
+                        🧢
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Konten Utama Bento Grid -->
+        <div class="flex-1 max-w-5xl w-full mx-auto px-5 sm:px-8 py-6 space-y-6">
+
+            <!-- BARIS ATAS: 2 KARTU (IKHTISAR PROGRES & ANGGOTA KELOMPOK) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                
+                <!-- KARTU 1: IKHTISAR LOKASI & STATISTIK TUGAS (7 Kolom) -->
+                <section class="lg:col-span-7 bg-cream-50 rounded-3xl p-5 sm:p-6 border border-cream-200 shadow-2xs flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-lg bg-forest-100 text-forest-700 flex items-center justify-center text-xs">
+                                    <i class="fa-solid fa-leaf"></i>
+                                </span>
+                                <h3 class="font-display text-lg font-bold text-forest-900">Ikhtisar Piket</h3>
+                            </div>
+                            <span class="bg-amber-100 text-wood-700 border border-amber-300/70 px-3 py-1 rounded-full text-xs font-bold">
+                                <i class="fa-solid fa-users mr-1 text-wood-600"></i> Kelompok Tahu Bulat
+                            </span>
+                        </div>
+
+                        <!-- Kotak Lokasi Piket -->
+                        <div class="bg-cream-100/80 border border-cream-200 rounded-2xl p-4 mb-4">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-wood-600 flex items-center gap-1.5">
+                                <i class="fa-solid fa-location-dot text-rose-500"></i> Lokasi Tugas Hari Ini
+                            </span>
+                            <p id="location-name" class="font-display text-lg sm:text-xl font-bold text-forest-950 mt-1">
+                                Masjid Utama & Serambi Depan
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Statistik Tugas Selesai & Belum Selesai + Progress Bar -->
+                    <div class="bg-cream-100/60 border border-cream-200 rounded-2xl p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-forest-800">Progres Kebersihan</span>
+                            <span id="progress-percent" class="font-display text-sm font-bold text-forest-700">0%</span>
+                        </div>
+
+                        <!-- Progress Bar Gaya Daun -->
+                        <div class="w-full bg-cream-200 rounded-full h-3 mb-4 p-0.5">
+                            <div id="progress-bar" class="bg-gradient-to-r from-forest-600 to-emerald-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+
+                        <!-- Counter Selesai & Belum Selesai -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-cream-50 rounded-xl p-3 border border-cream-200 flex items-center justify-between">
+                                <div>
+                                    <span class="block text-[11px] font-bold text-forest-700">Tugas Selesai</span>
+                                    <span id="completed-count" class="font-display text-2xl font-bold text-forest-700">0</span>
+                                </div>
+                                <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+                            </div>
+
+                            <div class="bg-cream-50 rounded-xl p-3 border border-cream-200 flex items-center justify-between">
+                                <div>
+                                    <span class="block text-[11px] font-bold text-wood-600">Belum Selesai</span>
+                                    <span id="pending-count" class="font-display text-2xl font-bold text-amber-600">0</span>
+                                </div>
+                                <div class="w-9 h-9 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center">
+                                    <i class="fa-regular fa-clock"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- KARTU 2: ANGGOTA KELOMPOK TAHU BULAT (Mirip Kartu "Invånare" / Warga di Gambar) (5 Kolom) -->
+                <section class="lg:col-span-5 bg-cream-50 rounded-3xl p-5 sm:p-6 border border-cream-200 shadow-2xs flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-lg bg-forest-100 text-forest-700 flex items-center justify-center text-xs">
+                                    <i class="fa-solid fa-user-group"></i>
+                                </span>
+                                <h3 class="font-display text-lg font-bold text-forest-900">Anggota Kelompok</h3>
+                            </div>
+                            <span class="text-xs font-bold text-forest-700 bg-forest-100 px-2.5 py-0.5 rounded-full">
+                                4 Santri
+                            </span>
+                        </div>
+
+                        <!-- Grid Avatar 4 Anggota Sesuai Permintaan -->
+                        <div id="members-grid" class="grid grid-cols-2 gap-3">
+                            <!-- Diisi otomatis oleh JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Badge Penanggung Jawab Hari Ini -->
+                    <div class="mt-4 pt-3 border-t border-cream-200 flex items-center justify-between text-xs">
+                        <span class="text-forest-800/75 font-medium">Koordinator Hari Ini:</span>
+                        <span id="day-pic" class="font-bold text-forest-900 bg-cream-200/80 px-2.5 py-1 rounded-lg">
+                            Nirwasita Aileen
+                        </span>
+                    </div>
+                </section>
+            </div>
+
+            <!-- BARIS BAWAH: DAFTAR CHECKLIST TUGAS PIKET & TOMBOL RESET -->
+            <section class="bg-cream-50 rounded-3xl p-5 sm:p-6 border border-cream-200 shadow-2xs space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-cream-200 pb-4">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-8 h-8 rounded-xl bg-forest-100 text-forest-700 flex items-center justify-center text-sm">
+                            <i class="fa-solid fa-list-check"></i>
+                        </span>
+                        <div>
+                            <h3 class="font-display text-lg sm:text-xl font-bold text-forest-950">Daftar Tugas Kebersihan</h3>
+                            <p class="text-xs text-forest-800/75">Klik kartu tugas untuk menandai sudah dikerjakan.</p>
+                        </div>
+                    </div>
+
+                    <!-- TOMBOL RESET CHECKLIST -->
+                    <button 
+                        id="reset-btn"
+                        onclick="openResetModal()"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-rose-700 bg-rose-100/80 hover:bg-rose-200/80 border border-rose-200 transition-colors cursor-pointer">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Reset Checklist</span>
+                    </button>
+                </div>
+
+                <!-- Banner Apresiasi saat 100% Selesai -->
+                <div id="all-done-banner" class="hidden bg-forest-800 text-cream-50 p-4 rounded-2xl border-2 border-amber-300/60 flex items-center gap-3.5 shadow-sm">
+                    <div class="w-11 h-11 rounded-2xl bg-amber-300 text-forest-950 flex items-center justify-center text-2xl shrink-0">
+                        🏆
+                    </div>
+                    <div>
+                        <h4 class="font-display font-bold text-base text-amber-200">Luar Biasa, Kelompok Tahu Bulat!</h4>
+                        <p class="text-xs text-cream-100/90">Semua tugas piket hari ini telah selesai 100%. Semoga berkah!</p>
+                    </div>
+                </div>
+
+                <!-- Daftar Kartu Tugas -->
+                <div id="task-list" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <!-- Item tugas dirender oleh JavaScript -->
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="max-w-5xl w-full mx-auto px-5 sm:px-8 py-5 text-center text-xs text-forest-800/60">
+            Smart Piket Santri &bull; Kelompok Tahu Bulat &copy; 2026
+        </footer>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- 3. MODAL KONFIRMASI RESET CHECKLIST                                   -->
+    <!-- ===================================================================== -->
+    <div id="reset-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-forest-950/60 backdrop-blur-xs p-4">
+        <div class="bg-cream-50 rounded-3xl max-w-sm w-full p-6 shadow-2xl border-2 border-cream-300">
+            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 border border-amber-300 flex items-center justify-center text-xl mb-4 mx-auto">
+                <i class="fa-solid fa-rotate-left"></i>
+            </div>
+            <h4 class="font-display text-lg font-bold text-center text-forest-950 mb-1">Reset Checklist Hari Ini?</h4>
+            <p class="text-xs text-center text-forest-800/80 mb-6 leading-relaxed">
+                Semua tanda selesai pada hari <strong id="modal-day-name" class="text-forest-950">Senin</strong> akan dikembalikan menjadi belum selesai.
+            </p>
+            <div class="grid grid-cols-2 gap-3">
+                <button 
+                    onclick="closeResetModal()" 
+                    class="py-2.5 px-4 rounded-xl text-xs font-bold text-forest-800 bg-cream-200 hover:bg-cream-300 transition-colors cursor-pointer">
+                    Batal
+                </button>
+                <button 
+                    onclick="confirmResetChecklist()" 
+                    class="py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 shadow-xs transition-colors cursor-pointer">
+                    Ya, Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container Notifikasi Toast -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- ===================================================================== -->
+    <!-- 4. JAVASCRIPT: DATA CONTOH & LOGIKA APLIKASI                          -->
+    <!-- ===================================================================== -->
+    <script>
+        // Daftar Anggota Kelompok Tahu Bulat sesuai permintaan user
+        const groupMembers = [
+            { name: "Nirwasita Aileen", role: "Ketua Kelompok", emoji: "👧🏻", bg: "bg-rose-100 border-rose-200" },
+            { name: "Jennie", role: "Anggota", emoji: "👩🏻‍🎤", bg: "bg-amber-100 border-amber-200" },
+            { name: "Halland", role: "Anggota", emoji: "🧑🏼‍🦱", bg: "bg-sky-100 border-sky-200" },
+            { name: "Ronaldo", role: "Anggota", emoji: "🧑🏽‍🦱", bg: "bg-emerald-100 border-emerald-200" }
+        ];
+
+        // Data Jadwal Piket Senin - Sabtu untuk Kelompok Tahu Bulat
+        const initialScheduleData = {
+            senin: {
+                dayLabel: "Senin",
+                icon: "fa-mosque",
+                pic: "Nirwasita Aileen",
+                location: "Masjid Utama & Serambi Depan",
+                tasks: [
+                    { id: "sen-1", title: "Menyapu seluruh lantai utama masjid", area: "Dalam Masjid", completed: true },
+                    { id: "sen-2", title: "Mengepel teras dan serambi masjid", area: "Serambi", completed: true },
+                    { id: "sen-3", title: "Merapikan saf sajadah & rak Al-Qur'an", area: "Mihrab", completed: false },
+                    { id: "sen-4", title: "Membersihkan area tempat wudhu", area: "Tempat Wudhu", completed: false }
+                ]
+            },
+            selasa: {
+                dayLabel: "Selasa",
+                icon: "fa-chalkboard-user",
+                pic: "Jennie",
+                location: "Ruang Kelas X-A & Koridor Utama",
+                tasks: [
+                    { id: "sel-1", title: "Menyapu lantai ruang kelas hingga bersih", area: "Ruang Kelas", completed: true },
+                    { id: "sel-2", title: "Menghapus papan tulis & merapikan spidol", area: "Depan Kelas", completed: false },
+                    { id: "sel-3", title: "Menata barisan meja dan kursi belajar", area: "Ruang Kelas", completed: false },
+                    { id: "sel-4", title: "Mengosongkan tempat sampah kelas", area: "Luar Kelas", completed: false }
+                ]
+            },
+            rabu: {
+                dayLabel: "Rabu",
+                icon: "fa-bed",
+                pic: "Halland",
+                location: "Asrama Santri Gedung A (Lantai 1)",
+                tasks: [
+                    { id: "rab-1", title: "Menyapu lorong kamar tidur asrama", area: "Lorong Asrama", completed: false },
+                    { id: "rab-2", title: "Merapikan rak sepatu dan sandal santri", area: "Teras Asrama", completed: false },
+                    { id: "rab-3", title: "Membersihkan kamar mandi dan bak air", area: "Sanitasi", completed: false },
+                    { id: "rab-4", title: "Mengecek kebersihan area jemuran", area: "Belakang Asrama", completed: false }
+                ]
+            },
+            kamis: {
+                dayLabel: "Kamis",
+                icon: "fa-utensils",
+                pic: "Ronaldo",
+                location: "Dapur Umum & Ruang Makan Santri",
+                tasks: [
+                    { id: "kam-1", title: "Mengelap meja makan panjang santri", area: "Ruang Makan", completed: true },
+                    { id: "kam-2", title: "Menyapu dan mengepel lantai ruang makan", area: "Ruang Makan", completed: false },
+                    { id: "kam-3", title: "Merapikan galon air minum dan rak gelas", area: "Sudut Minum", completed: false },
+                    { id: "kam-4", title: "Memilah sampah organik sisa makanan", area: "Area Cuci", completed: false }
+                ]
+            },
+            jumat: {
+                dayLabel: "Jumat",
+                icon: "fa-tree",
+                pic: "Nirwasita Aileen",
+                location: "Halaman Utama & Taman Pondok",
+                tasks: [
+                    { id: "jum-1", title: "Menyapu daun kering di lapangan utama", area: "Lapangan", completed: false },
+                    { id: "jum-2", title: "Menyiram tanaman hias di taman depan", area: "Taman", completed: false },
+                    { id: "jum-3", title: "Membersihkan selokan dari sampah plastik", area: "Drainase", completed: false },
+                    { id: "jum-4", title: "Kerja bakti persiapan Sholat Jumat", area: "Area Umum", completed: false }
+                ]
+            },
+            sabtu: {
+                dayLabel: "Sabtu",
+                icon: "fa-book-open",
+                pic: "Semua Anggota",
+                location: "Perpustakaan & Aula Serbaguna",
+                tasks: [
+                    { id: "sab-1", title: "Membersihkan debu pada rak buku bacaan", area: "Perpustakaan", completed: false },
+                    { id: "sab-2", title: "Menyapu dan mengepel lantai aula", area: "Aula Utama", completed: false },
+                    { id: "sab-3", title: "Merapikan karpet dan peralatan kajian", area: "Gudang Aula", completed: false },
+                    { id: "sab-4", title: "Mengecek kunci jendela sebelum akhir pekan", area: "Seluruh Ruangan", completed: false }
+                ]
+            }
+        };
+
+        const STORAGE_KEY = "smart_piket_tahu_bulat_v2";
+        let scheduleData = {};
+        let currentDay = "senin";
+
+        /**
+         * Inisialisasi Aplikasi
+         */
+        function initApp() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    scheduleData = JSON.parse(saved);
+                } else {
+                    scheduleData = JSON.parse(JSON.stringify(initialScheduleData));
+                    saveDataToStorage();
+                }
+            } catch (e) {
+                scheduleData = JSON.parse(JSON.stringify(initialScheduleData));
+            }
+
+            detectToday();
+            renderMembersCard();
+            renderDayTabs();
+            renderScheduleContent();
+        }
+
+        /**
+         * Deteksi hari saat ini (Senin - Sabtu)
+         */
+        function detectToday() {
+            const daysMap = ["minggu", "senin", "selasa", "rabu", "kamis", "jumat", "sabtu"];
+            const todayKey = daysMap[new Date().getDay()];
+
+            const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' };
+            const dateBadge = document.getElementById("current-date-badge");
+            if (dateBadge) {
+                dateBadge.textContent = new Date().toLocaleDateString('id-ID', options);
+            }
+
+            if (scheduleData[todayKey]) {
+                currentDay = todayKey;
+            }
+        }
+
+        function saveDataToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(scheduleData));
+            } catch (e) {
+                console.warn("Gagal menyimpan data ke localStorage", e);
+            }
+        }
+
+        /**
+         * Merender Kartu Anggota Kelompok Tahu Bulat (Gaya Avatar Warga Animal Crossing)
+         */
+        function renderMembersCard() {
+            const grid = document.getElementById("members-grid");
+            grid.innerHTML = groupMembers.map((member, index) => `
+                <div class="bg-cream-100/80 border border-cream-200 rounded-2xl p-3 flex flex-col items-center text-center hover:border-wood-500/50 transition-colors">
+                    <div class="w-12 h-12 rounded-full ${member.bg} border-2 flex items-center justify-center text-2xl shadow-2xs mb-1.5">
+                        ${member.emoji}
+                    </div>
+                    <p class="font-display font-bold text-xs sm:text-sm text-forest-950 leading-tight line-clamp-1">
+                        ${index + 1}. ${member.name}
+                    </p>
+                    <span class="text-[10px] font-semibold text-forest-700/80 mt-0.5">
+                        ${member.role}
+                    </span>
+                </div>
+            `).join("");
+        }
+
+        /**
+         * Merender Menu Navigasi Hari (Senin - Sabtu) di Sidebar
+         */
+        function renderDayTabs() {
+            const container = document.getElementById("day-tabs");
+            container.innerHTML = "";
+
+            Object.keys(scheduleData).forEach((dayKey) => {
+                const dayInfo = scheduleData[dayKey];
+                const isActive = dayKey === currentDay;
+
+                const total = dayInfo.tasks.length;
+                const done = dayInfo.tasks.filter(t => t.completed).length;
+                const isComplete = total > 0 && done === total;
+
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.onclick = () => switchDay(dayKey);
+
+                // Gaya tombol aktif putih krem bulat persis seperti tombol "Hem" di gambar referensi
+                btn.className = isActive
+                    ? "flex items-center justify-center md:justify-between px-3 py-2.5 rounded-full bg-cream-50 text-forest-950 font-bold shadow-sm transition-all cursor-pointer"
+                    : "flex items-center justify-center md:justify-between px-3 py-2.5 rounded-full text-cream-100/85 hover:bg-forest-800 hover:text-white font-semibold transition-all cursor-pointer";
+
+                btn.innerHTML = `
+                    <div class="flex items-center gap-2.5">
+                        <i class="fa-solid ${dayInfo.icon} text-xs ${isActive ? 'text-wood-600' : 'text-emerald-300/80'} hidden md:inline-block w-4 text-center"></i>
+                        <span class="text-xs sm:text-sm">${dayInfo.dayLabel}</span>
+                    </div>
+                    <span class="hidden md:inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full ${
+                        isActive 
+                            ? (isComplete ? 'bg-emerald-100 text-emerald-800 font-bold' : 'bg-cream-200 text-forest-900 font-bold')
+                            : 'bg-forest-800 text-cream-100/80'
+                    }">
+                        ${isComplete ? '<i class="fa-solid fa-check text-[9px]"></i>' : ''} ${done}/${total}
+                    </span>
+                `;
+
+                container.appendChild(btn);
+            });
+        }
+
+        function switchDay(dayKey) {
+            currentDay = dayKey;
+            renderDayTabs();
+            renderScheduleContent();
+        }
+
+        /**
+         * Merender Konten Utama Jadwal & Checklist Tugas
+         */
+        function renderScheduleContent() {
+            const data = scheduleData[currentDay];
+            if (!data) return;
+
+            // Update Label Hari, Lokasi & Koordinator
+            document.getElementById("header-day-label").textContent = data.dayLabel;
+            document.getElementById("location-name").textContent = data.location;
+            document.getElementById("day-pic").textContent = data.pic;
+
+            // Hitung Statistik
+            const total = data.tasks.length;
+            const completed = data.tasks.filter(t => t.completed).length;
+            const pending = total - completed;
+            const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+            document.getElementById("completed-count").textContent = completed;
+            document.getElementById("pending-count").textContent = pending;
+            document.getElementById("progress-percent").textContent = `${percent}%`;
+            document.getElementById("progress-bar").style.width = `${percent}%`;
+
+            // Banner 100% Selesai
+            const banner = document.getElementById("all-done-banner");
+            if (percent === 100 && total > 0) {
+                banner.classList.remove("hidden");
+            } else {
+                banner.classList.add("hidden");
+            }
+
+            // Render Daftar Checklist Tugas
+            const taskList = document.getElementById("task-list");
+            taskList.innerHTML = "";
+
+            data.tasks.forEach((task) => {
+                const card = document.createElement("div");
+                card.onclick = () => toggleTaskStatus(task.id);
+
+                card.className = task.completed
+                    ? "task-card flex items-center justify-between p-4 rounded-2xl bg-forest-100/70 border border-forest-600/30 cursor-pointer select-none"
+                    : "task-card flex items-center justify-between p-4 rounded-2xl bg-cream-100/70 hover:bg-cream-100 border border-cream-200 cursor-pointer select-none";
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-3.5 pr-2">
+                        <div class="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                            task.completed 
+                                ? 'bg-forest-700 text-white' 
+                                : 'bg-cream-50 border-2 border-cream-300'
+                        }">
+                            ${task.completed ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                        </div>
+                        <div>
+                            <p class="text-xs sm:text-sm font-bold leading-snug ${
+                                task.completed ? 'line-through text-forest-800/50' : 'text-forest-950'
+                            }">
+                                ${task.title}
+                            </p>
+                            <span class="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-md ${
+                                task.completed 
+                                    ? 'bg-forest-600/15 text-forest-800' 
+                                    : 'bg-cream-200/80 text-wood-700'
+                            }">
+                                <i class="fa-solid fa-tag text-[9px] mr-1"></i>${task.area}
+                            </span>
+                        </div>
+                    </div>
+
+                    <span class="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full ${
+                        task.completed 
+                            ? 'bg-emerald-100 text-emerald-800' 
+                            : 'bg-amber-100 text-wood-700'
+                    }">
+                        ${task.completed ? 'Selesai' : 'Belum'}
+                    </span>
+                `;
+
+                taskList.appendChild(card);
+            });
+        }
+
+        function toggleTaskStatus(taskId) {
+            const tasks = scheduleData[currentDay].tasks;
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.completed = !task.completed;
+                saveDataToStorage();
+                renderDayTabs();
+                renderScheduleContent();
+
+                if (task.completed) {
+                    showToast("Tugas selesai dicentang! 🌿", "success");
+                }
+            }
+        }
+
+        function openResetModal() {
+            const data = scheduleData[currentDay];
+            if (!data.tasks.some(t => t.completed)) {
+                showToast("Belum ada tugas yang dicentang hari ini.", "info");
+                return;
+            }
+            document.getElementById("modal-day-name").textContent = data.dayLabel;
+            const modal = document.getElementById("reset-modal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+        }
+
+        function closeResetModal() {
+            const modal = document.getElementById("reset-modal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+
+        function confirmResetChecklist() {
+            scheduleData[currentDay].tasks.forEach(t => t.completed = false);
+            saveDataToStorage();
+            renderDayTabs();
+            renderScheduleContent();
+            closeResetModal();
+            showToast(`Checklist hari ${scheduleData[currentDay].dayLabel} telah di-reset.`, "warning");
+        }
+
+        function showToast(message, type = "info") {
+            const container = document.getElementById("toast-container");
+            const toast = document.createElement("div");
+
+            let bg = "bg-forest-900 border-forest-700";
+            let icon = "fa-leaf";
+
+            if (type === "success") {
+                bg = "bg-forest-800 border-emerald-400";
+                icon = "fa-circle-check";
+            } else if (type === "warning") {
+                bg = "bg-wood-700 border-amber-300";
+                icon = "fa-rotate-left";
+            }
+
+            toast.className = `toast-animate ${bg} border text-cream-50 px-4 py-3 rounded-2xl shadow-lg flex items-center gap-2.5 text-xs font-bold max-w-xs`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-amber-300"></i><span>${message}</span>`;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transition = "opacity 0.3s ease";
+                setTimeout(() => toast.remove(), 300);
+            }, 2400);
+        }
+
+        window.addEventListener("DOMContentLoaded", initApp);
+    </script>
+</body>
+</html>
